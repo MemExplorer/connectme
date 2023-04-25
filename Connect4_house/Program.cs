@@ -1,7 +1,7 @@
 ﻿using DSharpPlus;
 using Microsoft.Extensions.Logging;
 using DSharpPlus.SlashCommands;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 using Connect4_house.Commands;
 
 namespace Connect4_house
