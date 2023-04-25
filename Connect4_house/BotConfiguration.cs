@@ -9,6 +9,6 @@ namespace Connect4_house
     internal class BotConfiguration
     {
         public static string BotName = "Connect4";
-        public static string Token = "MTEwMDM4NDE4MTQzNzA5MjAwMA.GVYS3-.gWL3o-LtPfQXPyS-WWlIxZN6t-od093s8kGzcI";
+        public static string Token = "MTEwMDM4ODQxOTE4NTY4ODYzNg.G6_29v.2nXkvF0_x_ewhq8XuR0Fs8F-4u0ymNofuLKAXE";
     }
 }
