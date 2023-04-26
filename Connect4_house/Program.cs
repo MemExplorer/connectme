@@ -1,10 +1,7 @@
 ﻿using DSharpPlus;
 using Microsoft.Extensions.Logging;
-using DSharpPlus.SlashCommands;
-using DSharpPlus.Interactivity.Enums;
-using DSharpPlus.Interactivity.Extensions;
-using DSharpPlus.Interactivity;
 using Connect4_house.Commands.GameCommandsModule;
+using DSharpPlus.SlashCommands;
 
 namespace Connect4_house
 {

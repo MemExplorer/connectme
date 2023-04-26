@@ -15,7 +15,8 @@ namespace Connect4_house.Commands.GameCommandsModule.Structures
         public DiscordChannel Channel { get; private set; }
         public PlayerType PlayerType { get; private set; }
         public DiscordButtonComponent buttonComponent { get; private set; } //button id is also the channel id
-
+        public DiscordMessageBuilder BoardMessageContents { get; set; }
+        public DiscordMessage BoardMessage { get; set; }
         public async Task Initialize(DiscordGuild guild, DiscordChannel category, string roleName, DiscordColor roleColor, PlayerType p)
         {
             PlayerType = p;

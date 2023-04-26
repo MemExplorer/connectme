@@ -16,6 +16,13 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             await GameInstance.Game.JoinGame(ctx);
         }
+
+        [SlashCommand("start", "Starts a Connect4 Game.")]
+        public async Task StartGame(InteractionContext ctx)
+        {
+            await GameInstance.Game.StartGame(ctx);
+        }
+
         [SlashCommand("delrole", "role deleter")]
         public async Task TestRoleDeleter(InteractionContext ctx)
         {

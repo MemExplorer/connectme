@@ -1,4 +1,5 @@
 ﻿using Connect4_house.GameLogic.Structures;
+using DSharpPlus.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,6 +109,29 @@ namespace Connect4_house.GameLogic
                 }
                 Console.WriteLine();
             }
+        }
+
+        private string GetDiscordEmojiFromCharacter(char c)
+        {
+            if (c == ENEMY)
+                return "🔴";
+            else if (c == TEAM)
+                return "🟡";
+
+            return "⚫";
+        }
+        public StringBuilder GetDiscordBoard()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < _board.GetLength(0); i++)
+            {
+                for (int y = 0; y < _board.GetLength(1); y++)
+                {
+                    sb.Append(GetDiscordEmojiFromCharacter(_board[i, y]));
+                }
+                sb.AppendLine();
+            }
+            return sb;
         }
     }
 }
