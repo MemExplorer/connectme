@@ -63,6 +63,12 @@ namespace Connect4_house.Commands.GameCommandsModule
                 return "Waiting for turn...\r\n" + message;
         }
 
+        private async Task UpdateDraw()
+        {
+            await GuildSetup.RedTeam.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("The Game has ended with draw."));
+            await GuildSetup.YellowTeam.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("The Game has ended with draw."));
+        }
+
         private async Task UpdateWinner()
         {
             DiscordConnect4Team teamWinner, teamLoser;
@@ -182,6 +188,13 @@ namespace Connect4_house.Commands.GameCommandsModule
             if (_game.FindConsecutive4(turnFlag))
             {
                 await UpdateWinner();
+                await ctx.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+                return;
+            }
+
+            if (_game.IsDraw())
+            {
+                await UpdateDraw();
                 await ctx.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
                 return;
             }

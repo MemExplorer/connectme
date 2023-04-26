@@ -20,6 +20,14 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         }
 
+        [SlashCommand("testmsg", "idk")]
+        public async Task testmsg(InteractionContext ctx)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Test message 1").AsEphemeral());
+            Thread.Sleep(2000);
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Test message 2").AsEphemeral());
+        }
+
         [SlashCommand("join", "Join a Connect4 Game.")]
         public async Task JoinGame(InteractionContext ctx, [Option("user", "Creator of the Game")] DiscordUser user)
         {

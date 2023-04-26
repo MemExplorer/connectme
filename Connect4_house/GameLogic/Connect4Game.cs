@@ -43,6 +43,9 @@ namespace Connect4_house.GameLogic
             return count == 4;
         }
 
+        public bool IsDraw()
+            => _slotIndices.All(x => x == ROW_MAX);
+
         public bool FindConsecutive4(PlayerType pType)
         {
             char c = pType == PlayerType.RED ? ENEMY : TEAM;
