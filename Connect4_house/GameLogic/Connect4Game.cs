@@ -120,6 +120,7 @@ namespace Connect4_house.GameLogic
 
             return "⚫";
         }
+
         public StringBuilder GetDiscordBoard()
         {
             StringBuilder sb = new StringBuilder();
