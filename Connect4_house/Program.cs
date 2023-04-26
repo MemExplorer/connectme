@@ -1,20 +1,19 @@
 ﻿using DSharpPlus;
 using Microsoft.Extensions.Logging;
 using DSharpPlus.SlashCommands;
-using Connect4_house.Commands;
-using Connect4_house.GameLogic;
-using Connect4_house.GameLogic.Structures;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Interactivity;
+using Connect4_house.Commands.GameCommandsModule;
 
 namespace Connect4_house
 {
     internal class Program
     {
-
         static DiscordClient _discordClient { get; set; }
 
         static void Main(string[] args)
         {
-
             MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
@@ -27,10 +26,13 @@ namespace Connect4_house
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = LogLevel.Debug
             });
-            var slashExt = _discordClient.UseSlashCommands();
-            slashExt.RegisterCommands<SlashCommands>();
-            await _discordClient.ConnectAsync();
 
+            var slashExt = _discordClient.UseSlashCommands();
+            slashExt.RegisterCommands<GameCommands>();
+            //slashExt.RegisterCommands<SlashCommands>();
+            _discordClient.ComponentInteractionCreated += Connect4DiscordGame.ButtonHandler;
+
+            await _discordClient.ConnectAsync();
             await Task.Delay(-1);
         }
     }

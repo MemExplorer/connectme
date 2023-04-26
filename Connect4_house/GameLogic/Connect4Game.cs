@@ -44,7 +44,7 @@ namespace Connect4_house.GameLogic
 
         public bool FindConsecutive4(PlayerType pType)
         {
-            char c = pType == PlayerType.ENEMY ? ENEMY : TEAM;
+            char c = pType == PlayerType.RED ? ENEMY : TEAM;
 
             for (int rowi = 0; rowi < _board.GetLength(0); rowi++)
             {
@@ -94,7 +94,7 @@ namespace Connect4_house.GameLogic
         {
             int row = (ROW_MAX - 1) - _slotIndices[slot - 1]++;
             int col = slot - 1;
-            char c = pType == PlayerType.ENEMY ? ENEMY : TEAM;
+            char c = pType == PlayerType.RED ? ENEMY : TEAM;
             _board[row, col] = c;
         }
 

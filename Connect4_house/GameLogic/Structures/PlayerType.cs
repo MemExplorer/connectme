@@ -8,7 +8,7 @@ namespace Connect4_house.GameLogic.Structures
 {
     internal enum PlayerType
     {
-        TEAM,
-        ENEMY
+        YELLOW,
+        RED
     }
 }
