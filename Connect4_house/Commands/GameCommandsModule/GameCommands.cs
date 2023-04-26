@@ -51,15 +51,16 @@ namespace Connect4_house.Commands.GameCommandsModule
         [SlashCommand("reset","Restart the Game")]
         public async Task ResetGame(InteractionContext ctx)
         {
-            if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
+            if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g) && g.started)
             {
                 bool res = await GameManager.TryResetGameInstance(ctx);
                 string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
                 await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
                 if(res && GameManager.GameInstances.TryGetValue(ctx.Member, out g))
                     await g.StartGame(ctx);
-
             }
+            else if(!g.started)
+                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You can only reset if the game has started!").AsEphemeral());
             else
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
         }

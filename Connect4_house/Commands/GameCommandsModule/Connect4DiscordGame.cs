@@ -13,7 +13,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         public Connect4GuildSetup GuildSetup { get; set; }
         private DiscordGuild _guild;
         private Connect4Game _game;
-        private bool inited = false;
+        public bool started {get; private set;} = false;
         private DiscordButtonComponent[] optionsBtns;
         private PlayerType turnFlag;
         private DiscordMember _creator;
@@ -60,8 +60,14 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         private async Task UpdateDraw()
         {
-            await GuildSetup.RedTeam.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("The Game has ended with draw."));
-            await GuildSetup.YellowTeam.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("The Game has ended with draw."));
+            //update message after a single message is created
+            GuildSetup.RedTeam.BoardMessageContents.ClearComponents();
+            GuildSetup.YellowTeam.BoardMessageContents.ClearComponents();
+            GuildSetup.RedTeam.BoardMessageContents.Content = "The Game has ended with draw.\n" + _game.GetDiscordBoard().ToString();
+            GuildSetup.YellowTeam.BoardMessageContents.Content = "The Game has ended with draw.\n" + _game.GetDiscordBoard().ToString();
+
+            await GuildSetup.RedTeam.BoardMessage.ModifyAsync(GuildSetup.RedTeam.BoardMessageContents);
+            await GuildSetup.YellowTeam.BoardMessage.ModifyAsync(GuildSetup.YellowTeam.BoardMessageContents);
         }
 
         private async Task UpdateWinner()
@@ -78,8 +84,14 @@ namespace Connect4_house.Commands.GameCommandsModule
                 teamLoser = GuildSetup.RedTeam;
             }
 
-            await teamWinner.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("Your team won!"));
-            await teamLoser.BoardMessage.ModifyAsync(new DiscordMessageBuilder().WithContent("Your team lost! Better luck next time <:coolmen:591614014698684417>"));
+            //update message after a single message is created
+            teamWinner.BoardMessageContents.ClearComponents();
+            teamLoser.BoardMessageContents.ClearComponents();
+            teamWinner.BoardMessageContents.Content = "Your team won!\n" + _game.GetDiscordBoard().ToString();
+            teamLoser.BoardMessageContents.Content = "Your team lost! Better luck next time <:coolmen:591614014698684417>\n" + _game.GetDiscordBoard().ToString();
+
+            await GuildSetup.RedTeam.BoardMessage.ModifyAsync(GuildSetup.RedTeam.BoardMessageContents);
+            await GuildSetup.YellowTeam.BoardMessage.ModifyAsync(GuildSetup.YellowTeam.BoardMessageContents);
 
         }
 
@@ -118,7 +130,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             if(isNew)
                 await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
-            inited = true;
+            started = false;
             _guild = i.Guild;
             _creator = creator;
             _game = new Connect4Game();
@@ -157,6 +169,7 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         public async Task StartGame(InteractionContext ctx, bool reset = false)
         {
+            started = true;
             await UpdateBoard();
             if(!reset)
             {
