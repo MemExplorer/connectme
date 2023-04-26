@@ -124,6 +124,7 @@ namespace Connect4_house.GameLogic
         public StringBuilder GetDiscordBoard()
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine("1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣");
             for (int i = 0; i < _board.GetLength(0); i++)
             {
                 for (int y = 0; y < _board.GetLength(1); y++)

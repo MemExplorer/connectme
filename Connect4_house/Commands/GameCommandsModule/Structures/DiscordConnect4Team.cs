@@ -17,7 +17,7 @@ namespace Connect4_house.Commands.GameCommandsModule.Structures
         public DiscordButtonComponent buttonComponent { get; private set; } //button id is also the channel id
         public DiscordMessageBuilder BoardMessageContents { get; set; }
         public DiscordMessage BoardMessage { get; set; }
-        public async Task Initialize(DiscordGuild guild, DiscordChannel category, string roleName, DiscordColor roleColor, PlayerType p)
+        public async Task Initialize(DiscordGuild guild, DiscordMember m, DiscordChannel category, string roleName, DiscordColor roleColor, PlayerType p)
         {
             PlayerType = p;
             Role = await guild.CreateRoleAsync(roleName, color:  roleColor);
@@ -27,7 +27,7 @@ namespace Connect4_house.Commands.GameCommandsModule.Structures
                 new DiscordOverwriteBuilder(guild.EveryoneRole).Deny(DSharpPlus.Permissions.UseVoice)
             };
             Channel = await guild.CreateChannelAsync(roleName + " Team", DSharpPlus.ChannelType.Voice ,category, overwrites: builderList);
-            buttonComponent = new DiscordButtonComponent(ButtonStyle.Primary, Channel.Id.ToString(), roleName + " Team");
+            buttonComponent = new DiscordButtonComponent(ButtonStyle.Primary, Channel.Id.ToString() + "|" + m.Id, roleName + " Team");
 
         }
 

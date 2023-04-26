@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Connect4_house.Commands.GameCommandsModule;
 using DSharpPlus.SlashCommands;
+using Connect4_house.Commands;
 
 namespace Connect4_house
 {
@@ -26,7 +27,7 @@ namespace Connect4_house
 
             var slashExt = _discordClient.UseSlashCommands();
             slashExt.RegisterCommands<GameCommands>();
-            //slashExt.RegisterCommands<SlashCommands>();
+            slashExt.RegisterCommands<SlashCommands>();
             _discordClient.ComponentInteractionCreated += Connect4DiscordGame.ButtonHandler;
 
             await _discordClient.ConnectAsync();

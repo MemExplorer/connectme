@@ -18,7 +18,7 @@ namespace Connect4_house.Commands
                "\n2. Only one piece is played at a time." +
                "\n3. Players can be on the offensive or defensive." +
                "\n4. The game ends when there is a 4-in-a-row or a stalemate." +
-               "\n5. The starter of the previous game goes second on the next game."));
+               "\n5. The starter of the previous game goes second on the next game.").AsEphemeral());
         }
     }
 }
