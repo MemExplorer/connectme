@@ -57,7 +57,7 @@ namespace Connect4_house.Commands.GameCommandsModule
                 string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
                 await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
                 if(res && GameManager.GameInstances.TryGetValue(ctx.Member, out g))
-                    await g.StartGame(ctx);
+                    await g.StartGame(ctx, true);
             }
             else if(!g.started)
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You can only reset if the game has started!").AsEphemeral());

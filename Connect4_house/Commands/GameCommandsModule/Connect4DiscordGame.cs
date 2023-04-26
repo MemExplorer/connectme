@@ -169,6 +169,13 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         public async Task StartGame(InteractionContext ctx, bool reset = false)
         {
+            if(reset)
+            {
+                GuildSetup.RedTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
+                GuildSetup.RedTeam.BoardMessageContents.AddComponents(optionsBtns.Skip(3).Take(4));
+                GuildSetup.YellowTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
+                GuildSetup.YellowTeam.BoardMessageContents.AddComponents(optionsBtns.Skip(3).Take(4));
+            }
             started = true;
             await UpdateBoard();
             if(!reset)
