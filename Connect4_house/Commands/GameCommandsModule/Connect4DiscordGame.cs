@@ -167,7 +167,7 @@ namespace Connect4_house.Commands.GameCommandsModule
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
             //calling function to reset game instance
-            bool res = await GameInstance.TryResetGameInstance(ctx);
+            bool res = await GameManager.TryResetGameInstance(ctx);
             //message result
             string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
             await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
@@ -238,31 +238,31 @@ namespace Connect4_house.Commands.GameCommandsModule
                 ulong userId = ulong.Parse(splitData[1]);
                 string actualBtnId = splitData[0];
                 DiscordMember gameCreator = await e.Guild.GetMemberAsync(userId);
-                if (!GameInstance.GameInstances.ContainsKey(gameCreator))
+                if (!GameManager.GameInstances.ContainsKey(gameCreator))
                     throw new NotSupportedException(); //unexpected error: game creator must be always in the game instance
                                                        //roles handler
 
-                if (actualBtnId == GameInstance.GameInstances[gameCreator].GuildSetup.RedTeam.Channel.Id.ToString())
-                    await GameInstance.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 0);
-                else if (actualBtnId == GameInstance.GameInstances[gameCreator].GuildSetup.YellowTeam.Channel.Id.ToString())
-                    await GameInstance.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 1);
+                if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.RedTeam.Channel.Id.ToString())
+                    await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 0);
+                else if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.YellowTeam.Channel.Id.ToString())
+                    await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 1);
             }
 
             //player move handler
             if(e.Id.StartsWith("_"))
             {
-                if (m.VoiceState.Channel == null || !GameInstance.ChannelLookup.ContainsKey(m.VoiceState.Channel.Id))
+                if (m.VoiceState.Channel == null || !GameManager.ChannelLookup.ContainsKey(m.VoiceState.Channel.Id))
                 {
                     await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to be in a game voice chat!"));
                     return;
                 }
 
-                DiscordMember gameCreator = GameInstance.ChannelLookup[m.VoiceState.Channel.Id];
-                if (!GameInstance.GameInstances.ContainsKey(gameCreator))
+                DiscordMember gameCreator = GameManager.ChannelLookup[m.VoiceState.Channel.Id];
+                if (!GameManager.GameInstances.ContainsKey(gameCreator))
                     throw new NotSupportedException(); //unexpected error: game creator must be always in the game instance
                                                        //roles handler
 
-                await GameInstance.GameInstances[gameCreator].PlayerMove(e.Interaction, m, e.Id);
+                await GameManager.GameInstances[gameCreator].PlayerMove(e.Interaction, m, e.Id);
             }
         }
     }

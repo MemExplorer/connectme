@@ -3,7 +3,7 @@ using DSharpPlus.SlashCommands;
 
 namespace Connect4_house.Commands.GameCommandsModule
 {
-    internal class GameInstance
+    internal class GameManager
     {
         internal static Dictionary<DiscordMember, Connect4DiscordGame> GameInstances = new Dictionary<DiscordMember, Connect4DiscordGame>();
         internal static Dictionary<ulong, DiscordMember> ChannelLookup = new Dictionary<ulong, DiscordMember>();
