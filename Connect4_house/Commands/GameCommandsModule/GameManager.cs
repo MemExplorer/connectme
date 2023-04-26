@@ -1,5 +1,7 @@
-﻿using DSharpPlus.Entities;
+﻿using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using System.Xml.Linq;
 
 namespace Connect4_house.Commands.GameCommandsModule
 {
@@ -32,6 +34,8 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         public static async Task<bool> TryResetGameInstance(InteractionContext ctx)
         {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
             DiscordMember member = ctx.Member;
             if (!GameInstances.ContainsKey(member))
                 return false;
@@ -47,6 +51,7 @@ namespace Connect4_house.Commands.GameCommandsModule
                 Console.WriteLine(ex.Message+ Environment.NewLine + ex.StackTrace);
                 return false;
             }
+
 
             return true;
         }

@@ -52,7 +52,14 @@ namespace Connect4_house.Commands.GameCommandsModule
         public async Task ResetGame(InteractionContext ctx)
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
-                await g.ResetGame(ctx);
+            {
+                bool res = await GameManager.TryResetGameInstance(ctx);
+                string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
+                if(res && GameManager.GameInstances.TryGetValue(ctx.Member, out g))
+                    await g.StartGame(ctx);
+
+            }
             else
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
         }

@@ -155,26 +155,14 @@ namespace Connect4_house.Commands.GameCommandsModule
                     }).AsEphemeral());
         }
 
-        public async Task StartGame(InteractionContext ctx)
+        public async Task StartGame(InteractionContext ctx, bool reset = false)
         {
             await UpdateBoard();
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-            new DiscordInteractionResponseBuilder().WithContent("The game has started!").AsEphemeral());
-        }
-
-        public async Task ResetGame(InteractionContext ctx)
-        {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-            new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
-            //calling function to reset game instance
-            bool res = await GameManager.TryResetGameInstance(ctx);
-            //message result
-            string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
-            await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
-
-            _game.ResetBoard();
-            await StartGame(ctx);
-
+            if(!reset)
+            {
+                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("The game has started!").AsEphemeral());
+            }
         }
 
         internal async Task PlayerMove(DiscordInteraction ctx, DiscordMember m, string ID)
@@ -251,9 +239,9 @@ namespace Connect4_house.Commands.GameCommandsModule
             //player move handler
             if(e.Id.StartsWith("_"))
             {
-                if (m.VoiceState.Channel == null || !GameManager.ChannelLookup.ContainsKey(m.VoiceState.Channel.Id))
+                if (m.VoiceState == null || m.VoiceState.Channel == null || !GameManager.ChannelLookup.ContainsKey(m.VoiceState.Channel.Id))
                 {
-                    await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to be in a game voice chat!"));
+                    await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to be in a game voice chat!").AsEphemeral());
                     return;
                 }
 
