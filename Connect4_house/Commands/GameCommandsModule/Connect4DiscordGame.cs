@@ -167,12 +167,10 @@ namespace Connect4_house.Commands.GameCommandsModule
             new DiscordInteractionResponseBuilder().WithContent("The game has started!").AsEphemeral());
         }
 
-
-
         public async Task ResetGame(InteractionContext ctx)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-          new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
+            new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
             //calling function to reset game instance
             bool res = await GameInstance.TryResetGameInstance(ctx);
             //message result
@@ -228,8 +226,6 @@ namespace Connect4_house.Commands.GameCommandsModule
 
             await UpdateBoard();
             await ctx.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
-            
-
         }
 
         internal async Task ChangeTeam(InteractionContext ctx, DiscordMember member, long teamCode)
