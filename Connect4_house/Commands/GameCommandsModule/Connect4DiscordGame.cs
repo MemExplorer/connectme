@@ -85,6 +85,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             if (_guildSetup.RedTeam.BoardMessageContents == null && _guildSetup.YellowTeam.BoardMessageContents == null)
             {
+                //create a message that will be used for later updates
                 DiscordMessageBuilder msgBuilderRed = new DiscordMessageBuilder();
                 msgBuilderRed.Content = GetBoardUpdateMessage(PlayerType.RED);
                 msgBuilderRed.AddComponents(optionsBtns.Take(3));
@@ -101,6 +102,7 @@ namespace Connect4_house.Commands.GameCommandsModule
             }
             else
             {
+                //update message after a single message is created
                 _guildSetup.RedTeam.BoardMessageContents.Content = GetBoardUpdateMessage(PlayerType.RED);
                 _guildSetup.YellowTeam.BoardMessageContents.Content = GetBoardUpdateMessage(PlayerType.YELLOW);
 
