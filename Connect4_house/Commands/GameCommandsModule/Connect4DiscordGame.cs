@@ -15,7 +15,7 @@ namespace Connect4_house.Commands.GameCommandsModule
 {
     internal class Connect4DiscordGame
     {
-        public Connect4GuildSetup GuildSetup { get; private set; }
+        public Connect4GuildSetup GuildSetup { get; set; }
         private DiscordGuild _guild;
         private Connect4Game _game;
         private bool inited = false;
@@ -119,13 +119,13 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         }
 
-        public async Task InitializeGame(InteractionContext i, DiscordMember creator)
+        public async Task InitializeGame(InteractionContext i, DiscordMember creator, bool isNew = true)
         {
-            await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
+            if(isNew)
+                await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
             inited = true;
             _guild = i.Guild;
             _creator = creator;
-            GuildSetup = new Connect4GuildSetup(_guild);
             _game = new Connect4Game();
             optionsBtns = new DiscordButtonComponent[7];
             optionsBtns[0] = new DiscordButtonComponent(ButtonStyle.Secondary, "_1", "", emoji: new DiscordComponentEmoji("1️⃣"));
@@ -135,7 +135,11 @@ namespace Connect4_house.Commands.GameCommandsModule
             optionsBtns[4] = new DiscordButtonComponent(ButtonStyle.Secondary, "_5", "", emoji: new DiscordComponentEmoji("5️⃣"));
             optionsBtns[5] = new DiscordButtonComponent(ButtonStyle.Secondary, "_6", "", emoji: new DiscordComponentEmoji("6️⃣"));
             optionsBtns[6] = new DiscordButtonComponent(ButtonStyle.Secondary, "_7", "", emoji: new DiscordComponentEmoji("7️⃣"));
-            await GuildSetup.InitializeTeam(creator);
+            if (isNew)
+            {
+                GuildSetup = new Connect4GuildSetup(_guild);
+                await GuildSetup.InitializeTeam(creator);
+            }
 
             turnFlag = PlayerType.RED;
         }
@@ -161,6 +165,23 @@ namespace Connect4_house.Commands.GameCommandsModule
             await UpdateBoard();
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("The game has started!").AsEphemeral());
+        }
+
+
+
+        public async Task ResetGame(InteractionContext ctx)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+          new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
+            //calling function to reset game instance
+            bool res = await GameInstance.TryResetGameInstance(ctx);
+            //message result
+            string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
+            await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
+
+            _game.ResetBoard();
+            await StartGame(ctx);
+
         }
 
         internal async Task PlayerMove(DiscordInteraction ctx, DiscordMember m, string ID)
