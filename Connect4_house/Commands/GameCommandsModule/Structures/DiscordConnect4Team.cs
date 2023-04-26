@@ -1,11 +1,6 @@
 ﻿using Connect4_house.GameLogic.Structures;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Connect4_house.Commands.GameCommandsModule.Structures
 {
