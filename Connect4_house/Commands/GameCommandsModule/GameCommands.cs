@@ -50,5 +50,29 @@ namespace Connect4_house.Commands.GameCommandsModule
             else
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
         }
+
+
+        [SlashCommand("reset","Restart the Game")]
+        public async Task ResetGame(InteractionContext ctx)
+        {
+            if (GameInstance.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
+                await g.ResetGame(ctx);
+            else
+                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
+        }
+
+        /*private static GameRoleMaker rolemaker = null;
+        [SlashCommand("makerole", "role maker")]
+        public async Task TestRoleMaker(InteractionContext ctx)
+        {
+            rolemaker = new GameRoleMaker(ctx.Guild);
+            await rolemaker.InitializeTeam();
+        }
+
+        [SlashCommand("delrole", "role deleter")]
+        public async Task TestRoleDeleter(InteractionContext ctx)
+        {
+            await rolemaker.Dispose();
+        }*/
     }
 }
