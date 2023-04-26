@@ -26,6 +26,9 @@ namespace Connect4_house.Commands.GameCommandsModule.Structures
 
         }
 
+        public int GetVoiceChannelUserCount()
+            => this.Channel.Users.Count;
+
         public async Task Dispose()
         {
             await Role.DeleteAsync();

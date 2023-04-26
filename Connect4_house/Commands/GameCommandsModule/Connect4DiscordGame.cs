@@ -169,6 +169,11 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         public async Task StartGame(InteractionContext ctx, bool reset = false)
         {
+            if(this.GuildSetup.RedTeam.GetVoiceChannelUserCount() < 1 || this.GuildSetup.YellowTeam.GetVoiceChannelUserCount() < 1)
+            {
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("At least 1 member must be in each voice channel to start the game."));
+                return;
+            }
             if(reset)
             {
                 GuildSetup.RedTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
