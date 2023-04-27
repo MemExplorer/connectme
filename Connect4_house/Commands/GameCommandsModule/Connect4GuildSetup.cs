@@ -21,7 +21,7 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         public async Task InitializeTeam(DiscordMember owner)
         {
-            _channelCategory = await _guild.CreateChannelCategoryAsync("Game Category " + owner.DisplayName);
+            _channelCategory = await _guild.CreateChannelCategoryAsync(owner.DisplayName + "'s Game Room");
             await RedTeam.Initialize(_guild, owner, _channelCategory, "Red", DiscordColor.Red, PlayerType.RED);
             await YellowTeam.Initialize(_guild, owner, _channelCategory, "Yellow", DiscordColor.Yellow, PlayerType.YELLOW);
         }
