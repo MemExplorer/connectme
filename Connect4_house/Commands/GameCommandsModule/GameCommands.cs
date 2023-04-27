@@ -16,7 +16,7 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         }
 
-        [SlashCommand("join", "Join a Connect4 Game.")]
+        [SlashCommand("join", "Join a ConnectMe Game.")]
         public async Task JoinGame(InteractionContext ctx, [Option("user", "Creator of the Game")] DiscordUser user)
         {
             DiscordMember m = await ctx.Guild.GetMemberAsync(user.Id);
@@ -41,7 +41,7 @@ namespace Connect4_house.Commands.GameCommandsModule
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Game does not exist!").AsEphemeral());
         }
 
-        [SlashCommand("start", "Starts a Connect4 Game.")]
+        [SlashCommand("start", "Starts a ConnectMe Game.")]
         public async Task StartGame(InteractionContext ctx)
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))

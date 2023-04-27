@@ -13,7 +13,7 @@ namespace Connect4_house
 
         static void Main(string[] args)
         {
-            Console.Title = "MultiConnect4";
+            Console.Title = "ConnectMe";
 
             //read config
             IniFile config = new IniFile();
