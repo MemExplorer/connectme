@@ -101,10 +101,10 @@ namespace Connect4_house.Commands.GameCommandsModule
             });
 
             teamLoser.BoardMessageContents.AddComponents(new DiscordButtonComponent[]
-{
+            {
                 _deleteGameBtn,
                 _resetGameBtn
-});
+            });
 
             teamWinner.BoardMessageContents.Content = "Your team won!\n" + _game.GetDiscordBoard().ToString();
             teamLoser.BoardMessageContents.Content = "Your team lost! Better luck next time <:coolmen:591614014698684417>\n" + _game.GetDiscordBoard().ToString();
@@ -149,6 +149,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             if(isNew)
                 await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
+            
             started = false;
             _guild = i.Guild;
             _game = new Connect4Game();
@@ -195,9 +196,10 @@ namespace Connect4_house.Commands.GameCommandsModule
                     await ctx.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("At least 1 member must be present in each voice channel to start the game.").AsEphemeral());
                 else
                     await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-new DiscordInteractionResponseBuilder().WithContent("At least 1 member must be in each voice channel to start the game.").AsEphemeral());
+                    new DiscordInteractionResponseBuilder().WithContent("At least 1 member must be in each voice channel to start the game.").AsEphemeral());
                 return;
             }
+
             if(reset)
             {
                 GuildSetup.RedTeam.BoardMessageContents.ClearComponents();
@@ -207,6 +209,7 @@ new DiscordInteractionResponseBuilder().WithContent("At least 1 member must be i
                 GuildSetup.YellowTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
                 GuildSetup.YellowTeam.BoardMessageContents.AddComponents(optionsBtns.Skip(3).Take(4));
             }
+
             started = true;
             await UpdateBoard();
             if(!reset)

@@ -31,7 +31,7 @@ namespace Connect4_house.Commands.GameCommandsModule
             [Option("user", "User to change team.")] DiscordUser user,
             [Choice("Red Team", 0)]
             [Choice("Yellow Team", 1)]
-            [Option("team", "List of teams")]
+            [Option("Team", "Select from the list of teams.")]
             long teamCode)
         {
             DiscordMember m = await ctx.Guild.GetMemberAsync(user.Id);
@@ -51,7 +51,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         }
 
         [SlashCommand("delgame", "Deletes the game that you created.")]
-        public async Task TestRoleDeleter(InteractionContext ctx)
+        public async Task GameDeleteCommand(InteractionContext ctx)
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
             {
