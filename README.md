@@ -1,4 +1,3 @@
-# ConnectMe
 
 <!-- PROJECT LOGO -->
 <br />
