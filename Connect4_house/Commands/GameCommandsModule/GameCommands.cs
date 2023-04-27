@@ -30,7 +30,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         public async Task StartGame(InteractionContext ctx)
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
-                await g.StartGame(ctx);
+                await g.StartGame(ctx.Interaction);
             else
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
         }
@@ -40,7 +40,7 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
             {
-                await GameManager.TryDeleteGameInstance(ctx);
+                await GameManager.TryDeleteGameInstance(ctx.Interaction, ctx.Member);
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully deleted game!").AsEphemeral());
             }
             else
@@ -53,11 +53,11 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g) && g.started)
             {
-                bool res = await GameManager.TryResetGameInstance(ctx);
+                bool res = await GameManager.TryResetGameInstance(ctx.Interaction, ctx.Member);
                 string message = (res) ? "Reset Successfully." : "Failed to reset the game.";
                 await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
                 if(res && GameManager.GameInstances.TryGetValue(ctx.Member, out g))
-                    await g.StartGame(ctx, true);
+                    await g.StartGame(ctx.Interaction, true);
             }
             else if(!g.started)
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You can only reset if the game has started!").AsEphemeral());

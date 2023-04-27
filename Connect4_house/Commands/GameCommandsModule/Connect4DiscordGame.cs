@@ -15,6 +15,8 @@ namespace Connect4_house.Commands.GameCommandsModule
         private Connect4Game _game;
         public bool started {get; private set;} = false;
         private DiscordButtonComponent[] optionsBtns;
+        private DiscordButtonComponent _deleteGameBtn;
+        private DiscordButtonComponent _resetGameBtn;
         private PlayerType turnFlag;
         private DiscordMember _creator;
 
@@ -87,6 +89,19 @@ namespace Connect4_house.Commands.GameCommandsModule
             //update message after a single message is created
             teamWinner.BoardMessageContents.ClearComponents();
             teamLoser.BoardMessageContents.ClearComponents();
+
+            teamWinner.BoardMessageContents.AddComponents(new DiscordButtonComponent[]
+            {
+                _deleteGameBtn,
+                _resetGameBtn
+            });
+
+            teamLoser.BoardMessageContents.AddComponents(new DiscordButtonComponent[]
+{
+                _deleteGameBtn,
+                _resetGameBtn
+});
+
             teamWinner.BoardMessageContents.Content = "Your team won!\n" + _game.GetDiscordBoard().ToString();
             teamLoser.BoardMessageContents.Content = "Your team lost! Better luck next time <:coolmen:591614014698684417>\n" + _game.GetDiscordBoard().ToString();
 
@@ -126,7 +141,7 @@ namespace Connect4_house.Commands.GameCommandsModule
 
         }
 
-        public async Task InitializeGame(InteractionContext i, DiscordMember creator, bool isNew = true)
+        public async Task InitializeGame(DiscordInteraction i, DiscordMember creator, bool isNew = true)
         {
             if(isNew)
                 await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
@@ -148,10 +163,12 @@ namespace Connect4_house.Commands.GameCommandsModule
                 await GuildSetup.InitializeTeam(creator);
             }
 
+            _deleteGameBtn = new DiscordButtonComponent(ButtonStyle.Primary, "@delGame|" + creator.Id.ToString(), "Delete Game");
+            _resetGameBtn = new DiscordButtonComponent(ButtonStyle.Primary, "@resBtn|" + creator.Id.ToString(), "Reset Button");
             turnFlag = PlayerType.RED;
         }
 
-        public async Task DisposeGame(InteractionContext ctx)
+        public async Task DisposeGame()
         {
             await GuildSetup.Dispose();
         }
@@ -167,15 +184,21 @@ namespace Connect4_house.Commands.GameCommandsModule
                     }).AsEphemeral());
         }
 
-        public async Task StartGame(InteractionContext ctx, bool reset = false)
+        public async Task StartGame(DiscordInteraction ctx, bool reset = false)
         {
             if(this.GuildSetup.RedTeam.GetVoiceChannelUserCount() < 1 || this.GuildSetup.YellowTeam.GetVoiceChannelUserCount() < 1)
             {
-                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("At least 1 member must be in each voice channel to start the game."));
+                if(reset)
+                    await ctx.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent("At least 1 member must be present in each voice channel to start the game.").AsEphemeral());
+                else
+                    await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+new DiscordInteractionResponseBuilder().WithContent("At least 1 member must be in each voice channel to start the game.").AsEphemeral());
                 return;
             }
             if(reset)
             {
+                GuildSetup.RedTeam.BoardMessageContents.ClearComponents();
+                GuildSetup.YellowTeam.BoardMessageContents.ClearComponents();
                 GuildSetup.RedTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
                 GuildSetup.RedTeam.BoardMessageContents.AddComponents(optionsBtns.Skip(3).Take(4));
                 GuildSetup.YellowTeam.BoardMessageContents.AddComponents(optionsBtns.Take(3));
@@ -245,7 +268,8 @@ namespace Connect4_house.Commands.GameCommandsModule
         {
             DiscordMember m = await e.Guild.GetMemberAsync(e.User.Id);
 
-            if(e.Id.Contains("|"))
+            //game button handlers
+            if (e.Id.Contains("|"))
             {
                 string[] splitData = e.Id.Split('|');
                 ulong userId = ulong.Parse(splitData[1]);
@@ -255,10 +279,39 @@ namespace Connect4_house.Commands.GameCommandsModule
                     throw new NotSupportedException(); //unexpected error: game creator must be always in the game instance
                                                        //roles handler
 
-                if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.RedTeam.Channel.Id.ToString())
-                    await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 0);
-                else if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.YellowTeam.Channel.Id.ToString())
-                    await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 1);
+                if(actualBtnId == "@delGame")
+                {
+                    if(!GameManager.GameInstances.ContainsKey(gameCreator))
+                    {
+                        await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
+                        return;
+                    }
+
+                    bool delResult = await GameManager.TryDeleteGameInstance(e.Interaction, gameCreator);
+                    if(!delResult)
+                        await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
+                }
+                else if(actualBtnId == "@resBtn")
+                {
+                    if (!GameManager.GameInstances.ContainsKey(gameCreator))
+                    {
+                        await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("You need to create your own game first!").AsEphemeral());
+                        return;
+                    }
+
+                    bool resetResult = await GameManager.TryResetGameInstance(e.Interaction, gameCreator);
+                    string message = resetResult ? "Reset Successfully." : "Failed to reset the game.";
+                    await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder().WithContent(message).AsEphemeral());
+                    if (resetResult && GameManager.GameInstances.TryGetValue(gameCreator, out Connect4DiscordGame g))
+                        await g.StartGame(e.Interaction, true);
+                }
+                else
+                {
+                    if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.RedTeam.Channel.Id.ToString())
+                        await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 0);
+                    else if (actualBtnId == GameManager.GameInstances[gameCreator].GuildSetup.YellowTeam.Channel.Id.ToString())
+                        await GameManager.GameInstances[gameCreator].AssignTeam(e.Interaction, m, 1);
+                }
             }
 
             //player move handler

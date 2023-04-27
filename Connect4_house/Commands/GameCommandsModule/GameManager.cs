@@ -18,7 +18,7 @@ namespace Connect4_house.Commands.GameCommandsModule
               
             //game instances 
             GameInstances[member] = new Connect4DiscordGame();
-            await GameInstances[member].InitializeGame(ctx, member);
+            await GameInstances[member].InitializeGame(ctx.Interaction, member);
 
             //restrict voice chat
             if (!ChannelLookup.ContainsKey(GameInstances[member].GuildSetup.RedTeam.Channel.Id) && !ChannelLookup.ContainsKey(GameInstances[member].GuildSetup.YellowTeam.Channel.Id))
@@ -32,11 +32,10 @@ namespace Connect4_house.Commands.GameCommandsModule
         }
 
 
-        public static async Task<bool> TryResetGameInstance(InteractionContext ctx)
+        public static async Task<bool> TryResetGameInstance(DiscordInteraction ctx, DiscordMember member)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Reseting the Game...").AsEphemeral());
-            DiscordMember member = ctx.Member;
             if (!GameInstances.ContainsKey(member))
                 return false;
             try
@@ -56,9 +55,8 @@ namespace Connect4_house.Commands.GameCommandsModule
             return true;
         }
 
-        public static async Task<bool> TryDeleteGameInstance(InteractionContext ctx)
+        public static async Task<bool> TryDeleteGameInstance(DiscordInteraction ctx, DiscordMember gameOwner)
         {
-            DiscordMember gameOwner = ctx.Member;
             if (!GameInstances.ContainsKey(gameOwner))
                 return false;
 
@@ -67,7 +65,7 @@ namespace Connect4_house.Commands.GameCommandsModule
                 return false;
 
 
-            await gameInstance.DisposeGame(ctx);
+            await gameInstance.DisposeGame();
             if (!ChannelLookup.Remove(gameInstance.GuildSetup.RedTeam.Channel.Id))
                 return false;
             if (!ChannelLookup.Remove(gameInstance.GuildSetup.YellowTeam.Channel.Id))
