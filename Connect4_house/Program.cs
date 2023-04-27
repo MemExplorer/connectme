@@ -12,6 +12,7 @@ namespace Connect4_house
 
         static void Main(string[] args)
         {
+            Console.Title = "MultiConnect4";
             MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
@@ -25,6 +26,8 @@ namespace Connect4_house
                 MinimumLogLevel = LogLevel.Debug
             });
 
+            _discordClient.Ready += _discordClient_Ready;
+
             var slashExt = _discordClient.UseSlashCommands();
             slashExt.RegisterCommands<GameCommands>();
             slashExt.RegisterCommands<SlashCommands>();
@@ -32,6 +35,12 @@ namespace Connect4_house
 
             await _discordClient.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private static Task _discordClient_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
+        {
+            Console.WriteLine("Bot is online!");
+            return Task.CompletedTask;
         }
     }
 }

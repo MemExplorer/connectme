@@ -26,6 +26,21 @@ namespace Connect4_house.Commands.GameCommandsModule
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Game does not exist!").AsEphemeral());
         }
 
+        [SlashCommand("changeteam", "Changes the specified user's team.")]
+        public async Task ChangeUserTeam(InteractionContext ctx, 
+            [Option("user", "User to change team.")] DiscordUser user,
+            [Choice("Red Team", 0)]
+            [Choice("Yellow Team", 1)]
+            [Option("team", "List of teams")]
+            long teamCode)
+        {
+            DiscordMember m = await ctx.Guild.GetMemberAsync(user.Id);
+            if (GameManager.GameInstances.TryGetValue(ctx.Member, out Connect4DiscordGame g))
+                await g.ChangeTeam(ctx, m, teamCode);
+            else
+                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Game does not exist!").AsEphemeral());
+        }
+
         [SlashCommand("start", "Starts a Connect4 Game.")]
         public async Task StartGame(InteractionContext ctx)
         {

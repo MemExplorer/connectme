@@ -18,7 +18,6 @@ namespace Connect4_house.Commands.GameCommandsModule
         private DiscordButtonComponent _deleteGameBtn;
         private DiscordButtonComponent _resetGameBtn;
         private PlayerType turnFlag;
-        private DiscordMember _creator;
 
         private async Task AssignTeam(DiscordInteraction ctx, DiscordMember member, long teamCode)
         {
@@ -40,15 +39,20 @@ namespace Connect4_house.Commands.GameCommandsModule
                 await member.RevokeRoleAsync(GuildSetup.RedTeam.Role);
                 await member.GrantRoleAsync(chosenRole);
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder().WithContent($"Successfully changed role from {GuildSetup.RedTeam.Role} to {chosenRole.Name}!").AsEphemeral());
+                    new DiscordInteractionResponseBuilder().WithContent($"Successfully changed role from {GuildSetup.RedTeam.Role.Name} to {chosenRole.Name}!").AsEphemeral());
+                return;
             }
             else if (member.Roles.Contains(GuildSetup.YellowTeam.Role) && chosenRole == GuildSetup.RedTeam.Role)
             {
                 await member.RevokeRoleAsync(GuildSetup.YellowTeam.Role);
                 await member.GrantRoleAsync(chosenRole);
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder().WithContent($"Successfully changed role from {GuildSetup.YellowTeam.Role} to {chosenRole.Name}!").AsEphemeral());
+                    new DiscordInteractionResponseBuilder().WithContent($"Successfully changed role from {GuildSetup.YellowTeam.Role.Name} to {chosenRole.Name}!").AsEphemeral());
+                return;
             }
+
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                    new DiscordInteractionResponseBuilder().WithContent("No changes has been made.").AsEphemeral());
         }
 
         private string GetBoardUpdateMessage(PlayerType p)
@@ -147,7 +151,6 @@ namespace Connect4_house.Commands.GameCommandsModule
                 await i.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Successfully Created Game!").AsEphemeral());
             started = false;
             _guild = i.Guild;
-            _creator = creator;
             _game = new Connect4Game();
             optionsBtns = new DiscordButtonComponent[7];
             optionsBtns[0] = new DiscordButtonComponent(ButtonStyle.Secondary, "_1", "", emoji: new DiscordComponentEmoji("1️⃣"));

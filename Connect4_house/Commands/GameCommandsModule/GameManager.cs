@@ -64,7 +64,6 @@ namespace Connect4_house.Commands.GameCommandsModule
             if(!ChannelLookup.ContainsKey(gameInstance.GuildSetup.RedTeam.Channel.Id) || !ChannelLookup.ContainsKey(gameInstance.GuildSetup.YellowTeam.Channel.Id))
                 return false;
 
-
             await gameInstance.DisposeGame();
             if (!ChannelLookup.Remove(gameInstance.GuildSetup.RedTeam.Channel.Id))
                 return false;
