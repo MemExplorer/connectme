@@ -4,7 +4,7 @@
 <p align="center">
     <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=ConnectMe&fontColor=ffffff&fontSize=80&fontAlignY=35&animation=twinkling" />
   <a href="https://github.com/CursedSheep/connectme">
-    <img src="https://media.discordapp.net/attachments/1099628502455697459/1100982304479911996/ConnectMe_Logo.png" width="200" height="200">
+    <img src="https://github.com/MemExplorer/connectme/blob/main/ConnectMe_Logo.png" width="200" height="200">
   </a>
 
   <h3 align="center">ConnectMe</h3>
